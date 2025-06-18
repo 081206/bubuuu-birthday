@@ -1,0 +1,360 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at top left, #ffb6c1, #ff69b4);
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.card-container {
+  width: 300px;
+  height: 400px;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 1s;
+}
+
+.card.flip {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  backface-visibility: hidden;
+  background: #fff;
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-front {
+  background: linear-gradient(135deg, #ffe4e1, #ffc0cb);
+}
+
+.card-back {
+  background: linear-gradient(135deg, #fcd2d1, #fda4af);
+  transform: rotateY(180deg);
+}
+
+h2 {
+  margin-top: 50px;
+  color: #c2185b;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+p {
+  color: #444;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 15px;
+  background: #ff4081;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: transform 0.2s, background 0.2s;
+}
+
+button:hover {
+  background: #f50057;
+  transform: scale(1.05);
+}
+
+/* Message box styles */
+#message-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
+    text-align: center;
+    max-width: 80%;
+    z-index: 1000;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.message-content {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: #333;
+}
+
+.countdown {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    color: #ff69b4;
+    font-weight: bold;
+}
+
+/* Slideshow styles */
+.slideshow {
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.slideshow img {
+    max-width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(255, 105, 180, 0.2);
+}
+
+.memory-caption {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    color: #ff69b4;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Mobile Responsive */
+@media (max-width: 480px) {
+  .card-container {
+    width: 280px;
+    height: 380px;
+  }
+  
+  h2 {
+    font-size: 20px;
+  }
+  
+  p {
+    font-size: 16px;
+  }
+  
+  button {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+}
+
+.heart-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.heart {
+  width: 20px;
+  height: 20px;
+  background: red;
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  animation: fall 4s linear infinite;
+  opacity: 0.8;
+}
+
+.heart::before,
+.heart::after {
+  content: "";
+  width: 20px;
+  height: 20px;
+  background: red;
+  position: absolute;
+  border-radius: 50%;
+}
+
+.heart::before {
+  top: -10px;
+  left: 0;
+}
+
+.heart::after {
+  left: 10px;
+  top: 0;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateX(0) translateY(0) rotate(45deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-30px) translateY(300px) rotate(90deg);
+    opacity: 0;
+  }
+}
+
+#surprise-area {
+  background: linear-gradient(to right, #fff0f5, #ffe4ec);
+  border: 2px dashed #e91e63;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 15px;
+  font-family: 'Segoe UI', sans-serif;
+  color: #880e4f;
+  font-size: 1.1em;
+  box-shadow: 0 0 15px rgba(255, 105, 180, 0.3);
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
+
+#surprise-message {
+  text-align: center;
+  padding: 20px;
+  color: #880e4f;
+  font-size: 1.4em;
+  line-height: 2.2;
+}
+
+#surprise-message strong {
+  color: #c2185b;
+  font-size: 1.5em;
+}
+
+button {
+  margin: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background: #ff69b4;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  transition: transform 0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
+  background: #ff1493;
+}
+
+.floating-heart {
+  width: 20px;
+  height: 20px;
+  background: url('https://i.ibb.co/GFnbQt2/heart-icon.png') no-repeat center;
+  background-size: contain;
+  position: absolute;
+  top: 100%;
+  animation: floatUp linear infinite;
+  z-index: 10;
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh);
+    opacity: 0;
+  }
+}
+
+.scroll-box {
+  max-height: 600px;
+  min-height: 400px;
+  width: 95%;
+  max-width: 800px;
+  overflow-y: auto;
+  padding: 30px;
+  background: linear-gradient(to bottom, rgba(255, 240, 245, 0.95), rgba(255, 228, 236, 0.95));
+  border-radius: 20px;
+  box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.4);
+  color: #880e4f;
+  font-family: 'Segoe UI', sans-serif;
+  line-height: 2;
+  backdrop-filter: blur(5px);
+  margin: 30px auto;
+  position: relative;
+  z-index: 2;
+}
+
+.scroll-box::-webkit-scrollbar {
+  width: 10px;
+  display: none;
+}
+
+.scroll-box:hover::-webkit-scrollbar {
+  display: block;
+}
+
+.scroll-box::-webkit-scrollbar-thumb {
+  background: #ff6699;
+  border-radius: 10px;
+}
+
+.scroll-box::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .scroll-box {
+    max-height: 700px;
+    width: 98%;
+    margin: 20px auto;
+    padding: 25px;
+  }
+  
+  #surprise-message {
+    font-size: 1.3em;
+    padding: 15px;
+  }
+}
+
+.music-player {
+    margin-top: 20px;
+    width: 100%;
+    max-width: 300px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.music-player iframe {
+    border: none;
+    width: 100%;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.9);
+} 

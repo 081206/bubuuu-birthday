@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, Bubuuu 🎂💖</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Starry Background */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite;
+            opacity: 0;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .card-container {
+            width: 300px;
+            height: 400px;
+            perspective: 1000px;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1s;
+        }
+
+        .card.flip {
+            transform: rotateY(180deg);
+        }
+
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            backface-visibility: hidden;
+            background: #fff;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #ffe4e1, #ffc0cb);
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #fcd2d1, #fda4af);
+            transform: rotateY(180deg);
+        }
+
+        h2 {
+            margin-top: 50px;
+            color: #c2185b;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #444;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            background: #ff4081;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        button:hover {
+            background: #f50057;
+            transform: scale(1.05);
+        }
+
+        /* Heart Rain */
+        .heart-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .heart {
+            width: 20px;
+            height: 20px;
+            background: red;
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            animation: fall 4s linear infinite;
+            opacity: 0.8;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: "";
+            width: 20px;
+            height: 20px;
+            background: red;
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .heart::before {
+            top: -10px;
+            left: 0;
+        }
+
+        .heart::after {
+            left: 10px;
+            top: 0;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateX(0) translateY(0) rotate(45deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(-30px) translateY(100vh) rotate(90deg);
+                opacity: 0;
+            }
+        }
+
+        /* Slideshow Styles */
+        .slideshow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 600px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 0 30px rgba(255, 105, 180, 0.4);
+        }
+
+        .slideshow.show {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        /* Close Slideshow Button */
+        .close-slideshow {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: #ff69b4;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 1100;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s;
+        }
+
+        .close-slideshow:hover {
+            background: #f50057;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide img {
+            max-width: 100%;
+            max-height: 85%;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .slide-caption {
+            margin-top: 15px;
+            color: #c2185b;
+            font-size: 1.2em;
+            text-align: center;
+            font-style: italic;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -48%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        /* Love Quotes */
+        .quote {
+            position: fixed;
+            color: white;
+            font-size: 1.2em;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            animation: floatQuote 8s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes floatQuote {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Quiz */
+        .quiz {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
+            display: none;
+            z-index: 1000;
+            max-width: 90%;
+            width: 400px;
+        }
+
+        .quiz.show {
+            display: block;
+        }
+
+        .quiz-question {
+            margin-bottom: 20px;
+            color: #c2185b;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .quiz-option {
+            padding: 10px;
+            border: 2px solid #ff69b4;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quiz-option:hover {
+            background: #ff69b4;
+            color: white;
+        }
+
+        /* Quiz Feedback */
+        .quiz-feedback {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 105, 180, 0.1);
+            color: #c2185b;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .quiz-feedback.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        /* Countdown Message */
+        .countdown-message {
+            color: #c2185b;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        /* Countdown */
+        .countdown {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.3);
+            z-index: 1000;
+        }
+
+        /* Footer */
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            font-size: 1.2em;
+            z-index: 1000;
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+            50% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.8); }
+        }
+
+        /* Typewriter Effect */
+        .typewriter {
+            overflow: hidden;
+            border-right: 2px solid #c2185b;
+            white-space: nowrap;
+            margin: 0 auto;
+            animation: typing 3.5s steps(40, end),
+                       blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #c2185b }
+        }
+
+        /* Audio Player */
+        .audio-player {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .audio-button {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.3);
+        }
+
+        .audio-button:hover {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 480px) {
+            .card-container {
+                width: 280px;
+                height: 380px;
+            }
+            
+            h2 {
+                font-size: 20px;
+            }
+            
+            p {
+                font-size: 16px;
+            }
+            
+            button {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+
+            .slideshow {
+                width: 95%;
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Starry Background -->
+    <div class="stars"></div>
+
+    <!-- Heart Container -->
+    <div class="heart-container"></div>
+
+    <!-- Main Card -->
+    <div class="card-container">
+        <div class="card">
+            <div class="card-front">
+                <h2>Happy Birthday Bubuuu! 🎂</h2>
+                <p>Click to open your special card 💝</p>
+            </div>
+            <div class="card-back">
+                <h2>To My Sweetest Bubuuu 💖</h2>
+                <p>This surprise is made with love by Cherry 🍒</p>
+                <button onclick="showSurprise()">🎁 Show Your Surprise</button>
+                <button onclick="startQuiz()">💝 Take Our Love Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slideshow -->
+    <div class="slideshow">
+        <button onclick="closeSlideshow()" class="close-slideshow">✖</button>
+        <div class="slide active">
+            <img src="assets/collage1.jpg" alt="Our First Memory">
+            <div class="slide-caption">Our first memory together 💖</div>
+        </div>
+        <div class="slide">
+            <img src="assets/collage2.jpg" alt="Special Moments">
+            <div class="slide-caption">Every moment with you is special ✨</div>
+        </div>
+        <div class="slide">
+            <img src="assets/collage3.jpg" alt="Forever Together">
+            <div class="slide-caption">Forever yours, my love 💝</div>
+        </div>
+        <div class="slide">
+            <img src="assets/collage4.jpg" alt="Sweet Memories">
+            <div class="slide-caption">Sweet memories we've created together 🥰</div>
+        </div>
+        <div class="slide">
+            <img src="assets/collage5.jpg" alt="Our Journey">
+            <div class="slide-caption">Our beautiful journey continues 💫</div>
+        </div>
+        <div class="slide">
+            <img src="assets/collage6.jpg" alt="Love Story">
+            <div class="slide-caption">Our love story gets more beautiful each day 💕</div>
+        </div>
+        <div class="slide">
+            <img src="assets/collage7.jpg" alt="Forever Love">
+            <div class="slide-caption">Forever and always, my Bubuuu 💖</div>
+        </div>
+    </div>
+
+    <!-- Quiz -->
+    <div class="quiz">
+        <div class="quiz-question">
+            <h3>Where did we first connect?</h3>
+            <div class="quiz-options">
+                <div class="quiz-option" onclick="checkAnswer(0, 0)">Instagram Group</div>
+                <div class="quiz-option" onclick="checkAnswer(0, 1)">Facebook</div>
+                <div class="quiz-option" onclick="checkAnswer(0, 2)">WhatsApp</div>
+                <div class="quiz-option" onclick="checkAnswer(0, 3)">Snapchat</div>
+            </div>
+            <div class="quiz-feedback"></div>
+        </div>
+        <div class="quiz-question" style="display: none;">
+            <h3>What date did we first talk in DM?</h3>
+            <div class="quiz-options">
+                <div class="quiz-option" onclick="checkAnswer(1, 0)">12 Nov</div>
+                <div class="quiz-option" onclick="checkAnswer(1, 1)">13 Nov</div>
+                <div class="quiz-option" onclick="checkAnswer(1, 2)">14 Nov</div>
+                <div class="quiz-option" onclick="checkAnswer(1, 3)">15 Nov</div>
+            </div>
+            <div class="quiz-feedback"></div>
+        </div>
+        <div class="quiz-question" style="display: none;">
+            <h3>Who calls whom "Cherry"? 🍒</h3>
+            <div class="quiz-options">
+                <div class="quiz-option" onclick="checkAnswer(2, 0)">You call her</div>
+                <div class="quiz-option" onclick="checkAnswer(2, 1)">you calls him</div>
+                <div class="quiz-option" onclick="checkAnswer(2, 2)">Both</div>
+                <div class="quiz-option" onclick="checkAnswer(2, 3)">No one</div>
+            </div>
+            <div class="quiz-feedback"></div>
+        </div>
+    </div>
+
+    <!-- Countdown -->
+    <div class="countdown">
+        <div class="countdown-message">Counting down for Birthday, my love 💞</div>
+        <div id="countdown-timer">20-06-2025 💕</div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        💖 Made with love by Cherry for Bubuuu 💖
+    </div>
+
+    <!-- Audio Player -->
+    <div class="audio-player">
+        <button class="audio-button" onclick="toggleAudio()" id="music-btn">🎵 Start Music</button>
+        <audio id="background-music" autoplay loop>
+            <source src="assets/ranjheya-ve.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script>
+        // Create stars
+        function createStars() {
+            const stars = document.querySelector('.stars');
+            for (let i = 0; i < 200; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.setProperty('--duration', Math.random() * 3 + 2 + 's');
+                stars.appendChild(star);
+            }
+        }
+
+        // Create hearts
+        function createHearts() {
+            const container = document.querySelector('.heart-container');
+            for (let i = 0; i < 50; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                heart.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(heart);
+            }
+        }
+
+        // Show floating quotes
+        function showQuote() {
+            const quotes = [
+                "Every moment with you is a treasure 💖",
+                "You make my heart smile 🥰",
+                "Forever yours, my love 💝",
+                "You're my favorite hello and my hardest goodbye 💕"
+            ];
+            const quote = document.createElement('div');
+            quote.className = 'quote';
+            quote.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+            quote.style.left = Math.random() * 80 + 10 + '%';
+            document.body.appendChild(quote);
+            setTimeout(() => quote.remove(), 8000);
+        }
+
+        // Card flip functionality
+        document.querySelector('.card-container').addEventListener('click', function() {
+            this.querySelector('.card').classList.toggle('flip');
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        });
+
+        // Show surprise
+        function showSurprise() {
+            document.querySelector('.slideshow').classList.add('show');
+            confetti({
+                particleCount: 200,
+                spread: 160,
+                origin: { y: 0.6 }
+            });
+            startSlideshow();
+        }
+
+        // Close slideshow
+        function closeSlideshow() {
+            document.querySelector('.slideshow').classList.remove('show');
+        }
+
+        // Slideshow functionality
+        let currentSlide = 0;
+        function startSlideshow() {
+            const slides = document.querySelectorAll('.slide');
+            setInterval(() => {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }, 5000); // Increased to 5 seconds for better viewing of more images
+        }
+
+        // Quiz functionality
+        let currentQuestion = 0;
+        const correctAnswers = [0, 1, 1]; // Instagram Group, 13 Nov, She calls you
+        const feedbackMessages = [
+            "💖 Bubuuu, you're always right!",
+            "😘 Aww you remember everything!",
+            "💝 My sweet Bubuuu knows me so well!"
+        ];
+
+        function startQuiz() {
+            document.querySelector('.quiz').classList.add('show');
+            showQuestion(0);
+        }
+
+        function showQuestion(index) {
+            const questions = document.querySelectorAll('.quiz-question');
+            questions.forEach((q, i) => {
+                q.style.display = i === index ? 'block' : 'none';
+            });
+        }
+
+        function checkAnswer(questionIndex, selected) {
+            const feedback = document.querySelectorAll('.quiz-feedback')[questionIndex];
+            if (selected === correctAnswers[questionIndex]) {
+                feedback.textContent = feedbackMessages[questionIndex];
+                feedback.classList.add('show');
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+                
+                setTimeout(() => {
+                    if (questionIndex < 2) {
+                        showQuestion(questionIndex + 1);
+                    } else {
+                        document.querySelector('.quiz').classList.remove('show');
+                    }
+                }, 2000);
+            } else {
+                feedback.textContent = "Try again, my love 💕";
+                feedback.classList.add('show');
+            }
+        }
+
+        // Countdown timer
+        function updateCountdown() {
+            const nextMeetup = new Date('2025-06-20').getTime(); // Update this date
+            const now = new Date().getTime();
+            const distance = nextMeetup - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('countdown-timer').innerHTML = 
+                `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        // Audio functionality
+        function toggleAudio() {
+            const audio = document.getElementById('background-music');
+            if (audio.paused) {
+                audio.play().then(() => {
+                    console.log('Music started successfully! 🎵');
+                    document.getElementById('music-btn').textContent = '🎵 Stop Music';
+                }).catch(error => {
+                    console.log('Could not play audio:', error);
+                    alert('Click the music button to start Ranjheya Ve! 🎵');
+                });
+            } else {
+                audio.pause();
+                console.log('Music paused');
+                document.getElementById('music-btn').textContent = '🎵 Start Music';
+            }
+        }
+
+        // Initialize
+        createStars();
+        createHearts();
+        setInterval(showQuote, 3000);
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+        
+        // Multiple ways to start background music
+        function startMusic() {
+            const audio = document.getElementById('background-music');
+            audio.play().then(() => {
+                console.log('Ranjheya Ve started! 🎵');
+            }).catch(error => {
+                console.log('Autoplay blocked, user needs to click:', error);
+            });
+        }
+        
+        // Try to start music on any user interaction
+        document.addEventListener('click', startMusic, { once: true });
+        document.addEventListener('touchstart', startMusic, { once: true });
+        document.addEventListener('keydown', startMusic, { once: true });
+        
+        // Also try to start music when page loads (might be blocked)
+        window.addEventListener('load', () => {
+            setTimeout(startMusic, 1000);
+        });
+    </script>
+</body>
+</html> 
